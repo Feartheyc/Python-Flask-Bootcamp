@@ -21,6 +21,25 @@
             }
         }
     </script>
+    <style>
+        /* Typing Animation CSS */
+        .typing-effect {
+            overflow: hidden;
+            border-right: .15em solid #7aa2f7;
+            white-space: nowrap;
+            letter-spacing: .05em;
+            animation: typing 2.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #7aa2f7; } }
+
+        /* Custom Pandas Table Styling */
+        .pandas-table { width: 100%; text-align: left; border-collapse: collapse; font-size: 0.875rem; }
+        .pandas-table th { background-color: #1a1b26; color: #7aa2f7; padding: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid #1a1b26; }
+        .pandas-table td { padding: 1rem; border-bottom: 1px solid #1a1b26; color: #c0caf5; }
+        .pandas-table tr:hover td { background-color: #1a1b26; transition: background-color 0.2s; }
+        .pandas-table tr:last-child td { border-bottom: none; }
+    </style>
 </head>
 <body class="bg-background text-textMain font-sans min-h-screen p-8">
     
@@ -34,14 +53,16 @@
     <div class="max-w-5xl mx-auto">
         
         <!-- Profile Header Section -->
-        <div class="bg-surface rounded-xl p-8 mb-10 shadow-lg flex items-center gap-6 border border-gray-800">
+        <div class="bg-surface rounded-xl p-8 mb-6 shadow-lg flex items-center gap-6 border border-gray-800">
             <img src="{{ user.avatar_url }}" alt="Profile" class="w-24 h-24 rounded-full border-2 border-primary">
             <div>
                 <h1 class="text-3xl font-bold text-white">{{ user.name or user.login }}</h1>
                 <p class="text-primary mt-1">
                     <a href="{{ user.html_url }}" target="_blank">@{{ user.login }}</a>
                 </p>
-                <p class="mt-2 text-textMain/80">{{ user.bio or "Developer building cool things." }}</p>
+                <div class="mt-2 inline-block max-w-full">
+                    <p class="text-textMain/80 typing-effect font-mono text-sm">{{ user.bio or "Developer building cool things." }}</p>
+                </div>
                 <div class="flex gap-4 mt-4 text-sm text-textMuted">
                     <span>📦 {{ user.public_repos }} Repositories</span>
                     <span>👥 {{ user.followers }} Followers</span>
@@ -49,30 +70,53 @@
             </div>
         </div>
 
+        <!-- Tech Stack Marquee -->
+        <div class="mb-10 flex flex-wrap gap-3">
+            <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+            <img src="https://img.shields.io/badge/Unity-100000?style=for-the-badge&logo=unity&logoColor=white" alt="Unity">
+            <img src="https://img.shields.io/badge/Godot-478CBF?style=for-the-badge&logo=godotengine&logoColor=white" alt="Godot">
+            <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white" alt="TensorFlow">
+            <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit">
+            <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" alt="Figma">
+        </div>
+
         <!-- Contributions & Stats Section -->
         <h2 class="text-2xl font-bold mb-6 text-white">Contributions & Stats</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <!-- GitHub Streak & Total Contributions -->
+            <!-- GitHub Streak -->
             <div class="bg-surface p-6 rounded-xl border border-gray-800 shadow-lg flex justify-center items-center overflow-hidden hover:border-primary transition-colors">
                 <img src="https://github-readme-streak-stats.herokuapp.com/?user={{ user.login }}&theme=tokyonight&hide_border=true&background=24283b" alt="GitHub Streak" class="max-w-full">
             </div>
             
             <!-- Most Used Languages -->
             <div class="bg-surface p-6 rounded-xl border border-gray-800 shadow-lg flex justify-center items-center overflow-hidden hover:border-primary transition-colors">
-                <img src="https://github-readme-stats.vercel.app/api/top-langs/?username={{ user.login }}&layout=compact&theme=tokyonight&hide_border=true&bg_color=24283b" alt="Top Languages" class="max-w-full">
+                <img src="https://github-readme-stats-eight-theta.vercel.app/api/top-langs?username={{ user.login }}&layout=compact&theme=tokyonight&hide_border=true&bg_color=24283b" alt="Top Languages" class="max-w-full">
             </div>
         </div>
 
-        <!-- 31-Day Activity Graph -->
+        <!-- Contribution Dot Chart -->
         <div class="bg-surface p-6 rounded-xl border border-gray-800 shadow-lg mb-10 overflow-x-auto hover:border-primary transition-colors flex justify-center">
-            <img src="https://github-readme-activity-graph.vercel.app/graph?username={{ user.login }}&theme=tokyo-night&bg_color=24283b&hide_border=true&color=7aa2f7" alt="Activity Graph" class="w-full min-w-[700px]">
+            <img src="https://ghchart.rshah.org/7aa2f7/{{ user.login }}" alt="Contribution Dot Graph" class="w-full max-w-3xl">
+        </div>
+
+        <!-- PANDAS DATA TABLE SECTION -->
+        <h2 class="text-2xl font-bold mb-6 text-white">Repository Analytics</h2>
+        <div class="bg-surface p-2 rounded-xl border border-gray-800 shadow-lg overflow-x-auto mb-10 hover:border-primary transition-colors">
+            <!-- The 'safe' filter ensures Flask renders the HTML generated by Pandas instead of printing raw string tags -->
+            {{ table_html | safe }}
         </div>
 
         <!-- Repositories Grid -->
         <h2 class="text-2xl font-bold mb-6 text-white">Recent Projects</h2>
+        
+        {% if repos|length == 0 %}
+        <div class="bg-surface p-6 rounded-xl border border-red-500/50 text-center mb-10">
+            <p class="text-textMain">Repositories temporarily hidden due to GitHub API rate limits. Give it a few minutes!</p>
+        </div>
+        {% else %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
-            {% for repo in repos %}
-            <a href="{{ repo.html_url }}" target="_blank" class="block bg-surface p-6 rounded-xl border border-gray-800 hover:border-primary transition-all hover:-translate-y-1 shadow-lg flex flex-col h-full">
+            {% for repo in repos[:6] %} <!-- Sliced to 6 here so the grid stays clean even though Pandas pulled 10 -->
+            <a href="{{ repo.html_url }}" target="_blank" class="repo-card block bg-surface p-6 rounded-xl border border-gray-800 hover:border-primary transition-all shadow-lg flex flex-col h-full">
                 <h3 class="text-xl font-semibold text-primary mb-2 truncate">{{ repo.name }}</h3>
                 <p class="text-sm text-textMain/70 mb-4 h-10 overflow-hidden line-clamp-2">
                     {{ repo.description or "No description provided." }}
@@ -84,7 +128,19 @@
             </a>
             {% endfor %}
         </div>
+        {% endif %}
 
     </div>
+
+    <!-- Vanilla Tilt for 3D card effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+    <script>
+        VanillaTilt.init(document.querySelectorAll(".repo-card"), {
+            max: 5,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.1,
+        });
+    </script>
 </body>
 </html>

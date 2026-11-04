@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Yuvraj Chavan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#1a1b26',
+                        surface: '#24283b',
+                        primary: '#7aa2f7',
+                        textMain: '#c0caf5',
+                        textMuted: '#9ece6a',
+                        accent: '#bb9af7'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-textMain font-sans min-h-screen p-8">
+    
+    <!-- Navigation -->
+    <nav class="max-w-5xl mx-auto mb-10 flex gap-6 text-sm font-semibold tracking-wide">
+        <a href="/" class="hover:text-primary transition-colors">Home</a>
+        <a href="/about" class="text-primary hover:text-white transition-colors">About</a>
+        <a href="/contact" class="hover:text-primary transition-colors">Contact</a>
+    </nav>
+
+    <div class="max-w-5xl mx-auto">
+        <h1 class="text-4xl font-bold text-white mb-8 border-b border-gray-800 pb-4">About Me</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Main Bio Column -->
+            <div class="md:col-span-2 space-y-6">
+                <div class="bg-surface p-8 rounded-xl border border-gray-800 shadow-lg">
+                    <h2 class="text-2xl font-bold text-primary mb-4">Background</h2>
+                    <p class="text-textMain/80 leading-relaxed mb-4">
+                        I am a Computer Science Engineering student based in Mumbai, blending software engineering, game development, and hands-on hardware modification. I prefer modular, practical execution over pure theory—building, iterating, and testing systems until they feel right.
+                    </p>
+                    <p class="text-textMain/80 leading-relaxed">
+                        Whether I am building context-aware tools, leading a team to ship educational games in Unity, or developing "FinQuest" using Python and Streamlit, my focus is on creating interactive and visually engaging digital experiences.
+                    </p>
+                </div>
+
+                <div class="bg-surface p-8 rounded-xl border border-gray-800 shadow-lg">
+                    <h2 class="text-2xl font-bold text-accent mb-4">Hardware & Modding</h2>
+                    <p class="text-textMain/80 leading-relaxed">
+                        Off the screen, I tinker with physical builds. I work on rebuilding retro handhelds (like configuring custom OS builds for the R36S), hardware modding with Wemos D1 Mini microcontrollers, and DIY 3D printing setups using Arduino Mega and RAMPS 1.4. I also design digital graphic assets, UI elements, and custom publication plugins.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Skills Sidebar -->
+            <div class="space-y-6">
+                <div class="bg-surface p-6 rounded-xl border border-gray-800 shadow-lg">
+                    <h3 class="text-xl font-bold text-white mb-4">Core Stack</h3>
+                    <ul class="space-y-3 font-mono text-sm text-textMuted">
+                        <li class="flex items-center gap-2"><span>▹</span> Python / Flask</li>
+                        <li class="flex items-center gap-2"><span>▹</span> Unity & Godot Engine</li>
+                        <li class="flex items-center gap-2"><span>▹</span> TensorFlow & Keras</li>
+                        <li class="flex items-center gap-2"><span>▹</span> OpenCV & MediaPipe</li>
+                        <li class="flex items-center gap-2"><span>▹</span> Streamlit</li>
+                    </ul>
+                </div>
+
+                <div class="bg-surface p-6 rounded-xl border border-gray-800 shadow-lg">
+                    <h3 class="text-xl font-bold text-white mb-4">Design & Tools</h3>
+                    <ul class="space-y-3 font-mono text-sm text-textMuted">
+                        <li class="flex items-center gap-2"><span>▹</span> Figma UI/UX</li>
+                        <li class="flex items-center gap-2"><span>▹</span> Blender (3D Modeling)</li>
+                        <li class="flex items-center gap-2"><span>▹</span> Pixel Art & 2D Assets</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
