@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Assignments</title>
+    <title>Employee Directory</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -14,7 +14,8 @@
                         surface: '#24283b',
                         primary: '#7aa2f7',
                         textMain: '#c0caf5',
-                        textMuted: '#9ece6a'
+                        textMuted: '#9ece6a',
+                        danger: '#f7768e'
                     }
                 }
             }
@@ -23,65 +24,112 @@
 </head>
 <body class="bg-background text-textMain font-sans min-h-screen p-8">
     
-    <!-- Navigation -->
-    <nav class="max-w-5xl mx-auto mb-10 flex gap-6 text-sm font-semibold tracking-wide">
+    <nav class="max-w-5xl mx-auto mb-10 flex flex-wrap gap-6 text-sm font-semibold tracking-wide">
         <a href="/" class="hover:text-primary transition-colors">Home</a>
         <a href="/about" class="hover:text-primary transition-colors">About</a>
-        <a href="/employees" class="text-primary hover:text-white transition-colors">Assignments</a>
+        <a href="/employees" class="text-primary hover:text-white transition-colors">Employees</a>
+        <a href="/images" class="hover:text-primary transition-colors">Memes API</a>
+        <a href="/jokes" class="hover:text-primary transition-colors">Jokes API</a>
         <a href="/contact" class="hover:text-primary transition-colors">Contact</a>
     </nav>
 
     <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- Add Employee Form (Left Column) -->
+        <!-- Interactive Add/Edit Form -->
         <div class="lg:col-span-1">
-            <h2 class="text-2xl font-bold text-white mb-6">New Assignment</h2>
-            <div class="bg-surface p-6 rounded-xl border border-gray-800 shadow-lg">
+            <h2 id="form_title" class="text-2xl font-bold text-white mb-6">New Employee</h2>
+            <div class="bg-surface p-6 rounded-xl border border-gray-800 shadow-lg transition-all duration-300" id="form_container">
                 <form action="/employees" method="POST" class="space-y-4">
+                    <!-- Hidden ID field to track if we are adding or editing -->
+                    <input type="hidden" name="emp_id" id="form_emp_id" value="">
+                    
                     <div>
                         <label class="block text-sm text-textMain/70 mb-1">Name</label>
-                        <input type="text" name="name" required class="w-full bg-background border border-gray-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-primary transition-colors">
+                        <input type="text" id="form_name" name="name" required class="w-full bg-background border border-gray-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-primary transition-colors">
                     </div>
                     <div>
                         <label class="block text-sm text-textMain/70 mb-1">Role</label>
-                        <input type="text" name="role" required class="w-full bg-background border border-gray-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-primary transition-colors">
+                        <input type="text" id="form_role" name="role" required class="w-full bg-background border border-gray-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-primary transition-colors">
                     </div>
                     <div>
-                        <label class="block text-sm text-textMain/70 mb-1">Project Assignment</label>
-                        <input type="text" name="assignment" required class="w-full bg-background border border-gray-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-primary transition-colors">
+                        <label class="block text-sm text-textMain/70 mb-1">Project / Team</label>
+                        <input type="text" id="form_assignment" name="assignment" required class="w-full bg-background border border-gray-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-primary transition-colors">
                     </div>
-                    <button type="submit" class="w-full bg-primary hover:bg-blue-500 text-gray-900 font-bold py-2.5 rounded-lg transition-colors mt-2">
-                        Add Record
-                    </button>
+                    
+                    <div class="pt-2 flex flex-col gap-2">
+                        <button type="submit" id="submit_btn" class="w-full bg-primary hover:bg-blue-500 text-gray-900 font-bold py-2.5 rounded-lg transition-colors">
+                            Add Employee
+                        </button>
+                        <!-- Hidden cancel button for edit mode -->
+                        <button type="button" id="cancel_btn" onclick="cancelEdit()" class="hidden w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-2.5 rounded-lg transition-colors">
+                            Cancel Edit
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        <!-- Employee Database Table (Right Column) -->
+        <!-- Employee Database Table & Search -->
         <div class="lg:col-span-2">
-            <h2 class="text-2xl font-bold text-white mb-6">Active Team Database</h2>
-            <div class="bg-surface rounded-xl border border-gray-800 shadow-lg overflow-hidden">
-                <table class="w-full text-left border-collapse text-sm">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 gap-4">
+                <h2 class="text-2xl font-bold text-white">Employee Directory</h2>
+                
+                <!-- Search Bar -->
+                <form action="/employees" method="GET" class="flex w-full sm:w-auto shadow-lg">
+                    <input type="text" name="q" value="{{ search_query }}" placeholder="Search directory..." class="bg-surface border border-gray-700 rounded-l-lg p-2.5 text-white focus:outline-none focus:border-primary transition-colors text-sm w-full sm:w-64">
+                    <button type="submit" class="bg-primary hover:bg-blue-500 text-gray-900 font-bold px-4 rounded-r-lg transition-colors text-sm flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                    </button>
+                </form>
+                {% if search_query %}
+                <a href="/employees" class="text-textMuted hover:text-white flex items-center text-sm ml-[-10px] mt-2 sm:mt-0">Clear</a>
+                {% endif %}
+            </div>
+
+            <div class="bg-surface rounded-xl border border-gray-800 shadow-lg overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm min-w-[600px]">
                     <thead>
                         <tr class="bg-gray-900/50">
                             <th class="p-4 text-primary font-semibold border-b border-gray-800">ID</th>
                             <th class="p-4 text-primary font-semibold border-b border-gray-800">Name</th>
                             <th class="p-4 text-primary font-semibold border-b border-gray-800">Role</th>
-                            <th class="p-4 text-primary font-semibold border-b border-gray-800">Assignment</th>
+                            <th class="p-4 text-primary font-semibold border-b border-gray-800">Project</th>
+                            <th class="p-4 text-primary font-semibold border-b border-gray-800 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for emp in employees %}
-                        <tr class="hover:bg-background/50 transition-colors">
+                        <tr class="hover:bg-background/50 transition-colors group">
                             <td class="p-4 border-b border-gray-800/50 text-textMuted">#{{ emp[0] }}</td>
-                            <td class="p-4 border-b border-gray-800/50 text-white">{{ emp[1] }}</td>
+                            <td class="p-4 border-b border-gray-800/50 text-white font-medium">{{ emp[1] }}</td>
                             <td class="p-4 border-b border-gray-800/50">{{ emp[2] }}</td>
                             <td class="p-4 border-b border-gray-800/50">{{ emp[3] }}</td>
+                            <td class="p-4 border-b border-gray-800/50 text-right">
+                                <div class="flex justify-end gap-3 opacity-70 group-hover:opacity-100 transition-opacity">
+                                    
+                                    <!-- Edit Pencil Icon -->
+                                    <button type="button" onclick="editEmployee('{{ emp[0] }}', '{{ emp[1]|escape }}', '{{ emp[2]|escape }}', '{{ emp[3]|escape }}')" class="text-primary hover:text-white transition-colors" title="Edit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                                        </svg>
+                                    </button>
+
+                                    <!-- Delete Trash Icon -->
+                                    <a href="/delete_employee/{{ emp[0] }}" onclick="return confirm('Delete {{ emp[1] }} from the directory?');" class="text-danger hover:text-red-400 transition-colors" title="Delete">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="4" class="p-8 text-center text-textMain/50 italic">
-                                Database is empty. Add an assignment to start.
+                            <td colspan="5" class="p-8 text-center text-textMain/50 italic">
+                                {% if search_query %} No employees found matching "{{ search_query }}".
+                                {% else %} Database is empty. Add an employee to start. {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
@@ -91,5 +139,45 @@
         </div>
 
     </div>
+
+    <!-- Script to handle switching the form between Add and Edit modes -->
+    <script>
+        function editEmployee(id, name, role, assignment) {
+            // Populate form fields
+            document.getElementById('form_emp_id').value = id;
+            document.getElementById('form_name').value = name;
+            document.getElementById('form_role').value = role;
+            document.getElementById('form_assignment').value = assignment;
+            
+            // Change form UI to Edit mode
+            document.getElementById('form_title').innerText = 'Edit Employee #' + id;
+            document.getElementById('submit_btn').innerText = 'Save Changes';
+            document.getElementById('cancel_btn').classList.remove('hidden');
+            
+            // Highlight the form border briefly
+            const container = document.getElementById('form_container');
+            container.classList.replace('border-gray-800', 'border-primary');
+            
+            // Scroll up to form on mobile
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            // Clear form fields
+            document.getElementById('form_emp_id').value = '';
+            document.getElementById('form_name').value = '';
+            document.getElementById('form_role').value = '';
+            document.getElementById('form_assignment').value = '';
+            
+            // Revert form UI to Add mode
+            document.getElementById('form_title').innerText = 'New Employee';
+            document.getElementById('submit_btn').innerText = 'Add Employee';
+            document.getElementById('cancel_btn').classList.add('hidden');
+            
+            // Revert border
+            const container = document.getElementById('form_container');
+            container.classList.replace('border-primary', 'border-gray-800');
+        }
+    </script>
 </body>
 </html>

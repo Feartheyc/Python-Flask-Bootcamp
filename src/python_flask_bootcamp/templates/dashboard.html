@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GitHub Dashboard</title>
-    <!-- Pull in Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -22,7 +21,6 @@
         }
     </script>
     <style>
-        /* Typing Animation CSS */
         .typing-effect {
             overflow: hidden;
             border-right: .15em solid #7aa2f7;
@@ -33,7 +31,6 @@
         @keyframes typing { from { width: 0 } to { width: 100% } }
         @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #7aa2f7; } }
 
-        /* Custom Pandas Table Styling */
         .pandas-table { width: 100%; text-align: left; border-collapse: collapse; font-size: 0.875rem; }
         .pandas-table th { background-color: #1a1b26; color: #7aa2f7; padding: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid #1a1b26; }
         .pandas-table td { padding: 1rem; border-bottom: 1px solid #1a1b26; color: #c0caf5; }
@@ -43,16 +40,17 @@
 </head>
 <body class="bg-background text-textMain font-sans min-h-screen p-8">
     
-    <!-- Navigation -->
-    <nav class="max-w-5xl mx-auto mb-8 flex gap-6 text-sm font-semibold tracking-wide">
-        <a href="/" class="text-primary hover:text-white transition-colors">Home</a>
-        <a href="/about" class="hover:text-primary transition-colors">About</a>
-        <a href="/contact" class="hover:text-primary transition-colors">Contact</a>
-    </nav>
+    <nav class="max-w-5xl mx-auto mb-8 flex flex-wrap gap-6 text-sm font-semibold tracking-wide">
+    <a href="/" class="text-primary hover:text-white transition-colors">Home</a>
+    <a href="/about" class="hover:text-primary transition-colors">About</a>
+    <a href="/employees" class="hover:text-primary transition-colors">Employees</a>
+    <a href="/images" class="hover:text-primary transition-colors">Memes API</a>
+    <a href="/jokes" class="hover:text-primary transition-colors">Jokes API</a>
+    <a href="/contact" class="hover:text-primary transition-colors">Contact</a>
+</nav>
 
     <div class="max-w-5xl mx-auto">
         
-        <!-- Profile Header Section -->
         <div class="bg-surface rounded-xl p-8 mb-6 shadow-lg flex items-center gap-6 border border-gray-800">
             <img src="{{ user.avatar_url }}" alt="Profile" class="w-24 h-24 rounded-full border-2 border-primary">
             <div>
@@ -70,7 +68,6 @@
             </div>
         </div>
 
-        <!-- Tech Stack Marquee -->
         <div class="mb-10 flex flex-wrap gap-3">
             <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
             <img src="https://img.shields.io/badge/Unity-100000?style=for-the-badge&logo=unity&logoColor=white" alt="Unity">
@@ -80,38 +77,64 @@
             <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" alt="Figma">
         </div>
 
-        <!-- Contributions & Stats Section -->
         <h2 class="text-2xl font-bold mb-6 text-white">Contributions & Stats</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <!-- GitHub Streak -->
             <div class="bg-surface p-6 rounded-xl border border-gray-800 shadow-lg flex justify-center items-center overflow-hidden hover:border-primary transition-colors">
                 <img src="https://github-readme-streak-stats.herokuapp.com/?user={{ user.login }}&theme=tokyonight&hide_border=true&background=24283b" alt="GitHub Streak" class="max-w-full">
             </div>
-            
-            <!-- Most Used Languages -->
             <div class="bg-surface p-6 rounded-xl border border-gray-800 shadow-lg flex justify-center items-center overflow-hidden hover:border-primary transition-colors">
                 <img src="https://github-readme-stats-eight-theta.vercel.app/api/top-langs?username={{ user.login }}&layout=compact&theme=tokyonight&hide_border=true&bg_color=24283b" alt="Top Languages" class="max-w-full">
             </div>
         </div>
 
-        <!-- Contribution Dot Chart -->
         <div class="bg-surface p-6 rounded-xl border border-gray-800 shadow-lg mb-10 overflow-x-auto hover:border-primary transition-colors flex justify-center">
             <img src="https://ghchart.rshah.org/7aa2f7/{{ user.login }}" alt="Contribution Dot Graph" class="w-full max-w-3xl">
         </div>
 
-        <!-- EXCEL DATA TABLE SECTION -->
+        <!-- EMPLOYEE DATABASE PREVIEW SECTION -->
+        <div class="flex justify-between items-end mb-6">
+            <h2 class="text-2xl font-bold text-white">Active Team Assignments</h2>
+            <a href="/employees" class="text-sm text-primary hover:text-white transition-colors">View All & Add New &rarr;</a>
+        </div>
+        <div class="bg-surface rounded-xl border border-gray-800 shadow-lg overflow-hidden mb-10">
+            <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                    <tr class="bg-gray-900/50">
+                        <th class="p-4 text-primary font-semibold border-b border-gray-800">ID</th>
+                        <th class="p-4 text-primary font-semibold border-b border-gray-800">Name</th>
+                        <th class="p-4 text-primary font-semibold border-b border-gray-800">Role</th>
+                        <th class="p-4 text-primary font-semibold border-b border-gray-800">Assignment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emp in employees %}
+                    <tr class="hover:bg-background/50 transition-colors">
+                        <td class="p-4 border-b border-gray-800/50 text-textMuted">#{{ emp[0] }}</td>
+                        <td class="p-4 border-b border-gray-800/50 text-white">{{ emp[1] }}</td>
+                        <td class="p-4 border-b border-gray-800/50">{{ emp[2] }}</td>
+                        <td class="p-4 border-b border-gray-800/50">{{ emp[3] }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="p-8 text-center text-textMain/50 italic">
+                            Database is empty. Add an assignment from the <a href="/employees" class="text-primary hover:underline">Assignments page</a>.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
         <h2 class="text-2xl font-bold mb-6 text-white">Local Data Feed (Excel)</h2>
         <div class="bg-surface p-2 rounded-xl border border-gray-800 shadow-lg overflow-x-auto mb-10 hover:border-primary transition-colors flex justify-center items-center min-h-[100px]">
             {{ excel_html | safe }}
         </div>
 
-        <!-- GITHUB PANDAS DATA TABLE SECTION -->
         <h2 class="text-2xl font-bold mb-6 text-white">Repository Analytics</h2>
         <div class="bg-surface p-2 rounded-xl border border-gray-800 shadow-lg overflow-x-auto mb-10 hover:border-primary transition-colors">
             {{ table_html | safe }}
         </div>
 
-        <!-- Repositories Grid -->
         <h2 class="text-2xl font-bold mb-6 text-white">Recent Projects</h2>
         
         {% if repos|length == 0 %}
@@ -137,7 +160,6 @@
 
     </div>
 
-    <!-- Vanilla Tilt for 3D card effects -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
     <script>
         VanillaTilt.init(document.querySelectorAll(".repo-card"), {
