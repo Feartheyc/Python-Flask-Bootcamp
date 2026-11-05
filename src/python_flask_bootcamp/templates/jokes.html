@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jokes API Feed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#1a1b26',
+                        surface: '#24283b',
+                        primary: '#7aa2f7',
+                        textMain: '#c0caf5',
+                        textMuted: '#9ece6a'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-textMain font-sans min-h-screen p-8">
+    
+    <nav class="max-w-5xl mx-auto mb-10 flex flex-wrap gap-6 text-sm font-semibold tracking-wide">
+        <a href="/" class="hover:text-primary transition-colors">Home</a>
+        <a href="/about" class="hover:text-primary transition-colors">About</a>
+        <a href="/employees" class="hover:text-primary transition-colors">Employees</a>
+        <a href="/images" class="hover:text-primary transition-colors">Memes API</a>
+        <a href="/jokes" class="text-primary hover:text-white transition-colors">Jokes API</a>
+        <a href="/contact" class="hover:text-primary transition-colors">Contact</a>
+    </nav>
+
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold text-white mb-2">Developer Jokes Feed</h2>
+            <p class="text-textMuted font-mono text-sm">Powered by JokeAPI</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-10">
+            {% for joke in jokes %}
+            <div class="bg-surface p-6 rounded-xl border border-gray-800 hover:border-primary transition-colors shadow-lg flex flex-col justify-between h-full">
+                <!-- Using JokeAPI's 'setup' key -->
+                <p class="text-lg text-white font-medium mb-6">"{{ joke.setup }}"</p>
+                <div class="mt-auto">
+                    <!-- Using JokeAPI's 'delivery' key -->
+                    <p class="text-primary font-mono bg-background p-3 rounded-lg border border-gray-700/50 inline-block">
+                        &rarr; {{ joke.delivery }}
+                    </p>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-span-2 bg-surface p-8 rounded-xl border border-red-500/50 text-center">
+                <p class="text-textMain">Failed to connect to the API. The service might be temporarily down or rate-limited.</p>
+                <button onclick="window.location.reload()" class="mt-4 bg-primary text-gray-900 px-4 py-2 rounded font-bold text-sm">Retry Connection</button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>

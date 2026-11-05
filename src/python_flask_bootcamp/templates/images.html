@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live API Meme Feed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#1a1b26',
+                        surface: '#24283b',
+                        primary: '#7aa2f7',
+                        textMain: '#c0caf5',
+                        textMuted: '#9ece6a'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-textMain font-sans min-h-screen p-8">
+    
+    <nav class="max-w-5xl mx-auto mb-10 flex flex-wrap gap-6 text-sm font-semibold tracking-wide">
+        <a href="/" class="hover:text-primary transition-colors">Home</a>
+        <a href="/about" class="hover:text-primary transition-colors">About</a>
+        <a href="/employees" class="hover:text-primary transition-colors">Employees</a>
+        <a href="/images" class="text-primary hover:text-white transition-colors">Memes API</a>
+        <a href="/jokes" class="hover:text-primary transition-colors">Jokes API</a>
+        <a href="/contact" class="hover:text-primary transition-colors">Contact</a>
+    </nav>
+
+    <div class="max-w-3xl mx-auto text-center">
+        <h2 class="text-3xl font-bold text-white mb-2" id="meme-title">Loading Memes...</h2>
+        <p class="text-textMuted mb-8 font-mono text-sm">Powered by Imgflip API</p>
+        
+        <div class="bg-surface p-4 rounded-xl border border-gray-800 shadow-lg min-h-[450px] flex items-center justify-center relative overflow-hidden group">
+            
+            <div id="loader" class="text-primary font-mono animate-pulse absolute">Fetching from API...</div>
+            
+            <img id="dynamic-image" src="" alt="API Image" class="max-w-full h-[400px] object-contain rounded-lg shadow-md hidden transition-opacity duration-500 opacity-0">
+            
+            <!-- Visual Timer Bar -->
+            <div class="absolute bottom-0 left-0 h-1 bg-primary transition-all ease-linear" id="progress-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        const imgElement = document.getElementById('dynamic-image');
+        const titleElement = document.getElementById('meme-title');
+        const loader = document.getElementById('loader');
+        const progressBar = document.getElementById('progress-bar');
+        const intervalTime = 5000;
+        let memesArray = [];
+
+        // Fetch the list of top memes from Imgflip
+        function fetchMemes() {
+            fetch('https://api.imgflip.com/get_memes')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        memesArray = data.data.memes;
+                        showRandomMeme(); // Show first meme immediately
+                        setInterval(showRandomMeme, intervalTime); // Start 5-second loop
+                    }
+                })
+                .catch(error => console.error("Error fetching Memes:", error));
+        }
+
+        function showRandomMeme() {
+            if (memesArray.length === 0) return;
+
+            // Reset progress bar width instantly
+            progressBar.style.transition = 'none';
+            progressBar.style.width = '0%';
+            
+            // Pick a random meme
+            const randomMeme = memesArray[Math.floor(Math.random() * memesArray.length)];
+            
+            // Fade out
+            imgElement.style.opacity = '0';
+            
+            setTimeout(() => {
+                imgElement.src = randomMeme.url;
+                titleElement.innerText = randomMeme.name;
+            }, 200);
+        }
+
+        imgElement.onload = () => {
+            loader.classList.add('hidden');
+            imgElement.classList.remove('hidden');
+            imgElement.style.opacity = '1'; // Fade in new meme
+            
+            // Start progress bar animation
+            requestAnimationFrame(() => {
+                progressBar.style.transition = `width ${intervalTime}ms linear`;
+                progressBar.style.width = '100%';
+            });
+        };
+
+        // Initialize
+        fetchMemes();
+    </script>
+</body>
+</html>
