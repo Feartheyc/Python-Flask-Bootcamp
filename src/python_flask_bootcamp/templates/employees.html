@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Assignments</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#1a1b26',
+                        surface: '#24283b',
+                        primary: '#7aa2f7',
+                        textMain: '#c0caf5',
+                        textMuted: '#9ece6a'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-textMain font-sans min-h-screen p-8">
+    
+    <!-- Navigation -->
+    <nav class="max-w-5xl mx-auto mb-10 flex gap-6 text-sm font-semibold tracking-wide">
+        <a href="/" class="hover:text-primary transition-colors">Home</a>
+        <a href="/about" class="hover:text-primary transition-colors">About</a>
+        <a href="/employees" class="text-primary hover:text-white transition-colors">Assignments</a>
+        <a href="/contact" class="hover:text-primary transition-colors">Contact</a>
+    </nav>
+
+    <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Add Employee Form (Left Column) -->
+        <div class="lg:col-span-1">
+            <h2 class="text-2xl font-bold text-white mb-6">New Assignment</h2>
+            <div class="bg-surface p-6 rounded-xl border border-gray-800 shadow-lg">
+                <form action="/employees" method="POST" class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-textMain/70 mb-1">Name</label>
+                        <input type="text" name="name" required class="w-full bg-background border border-gray-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-primary transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-textMain/70 mb-1">Role</label>
+                        <input type="text" name="role" required class="w-full bg-background border border-gray-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-primary transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-textMain/70 mb-1">Project Assignment</label>
+                        <input type="text" name="assignment" required class="w-full bg-background border border-gray-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-primary transition-colors">
+                    </div>
+                    <button type="submit" class="w-full bg-primary hover:bg-blue-500 text-gray-900 font-bold py-2.5 rounded-lg transition-colors mt-2">
+                        Add Record
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Employee Database Table (Right Column) -->
+        <div class="lg:col-span-2">
+            <h2 class="text-2xl font-bold text-white mb-6">Active Team Database</h2>
+            <div class="bg-surface rounded-xl border border-gray-800 shadow-lg overflow-hidden">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-gray-900/50">
+                            <th class="p-4 text-primary font-semibold border-b border-gray-800">ID</th>
+                            <th class="p-4 text-primary font-semibold border-b border-gray-800">Name</th>
+                            <th class="p-4 text-primary font-semibold border-b border-gray-800">Role</th>
+                            <th class="p-4 text-primary font-semibold border-b border-gray-800">Assignment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emp in employees %}
+                        <tr class="hover:bg-background/50 transition-colors">
+                            <td class="p-4 border-b border-gray-800/50 text-textMuted">#{{ emp[0] }}</td>
+                            <td class="p-4 border-b border-gray-800/50 text-white">{{ emp[1] }}</td>
+                            <td class="p-4 border-b border-gray-800/50">{{ emp[2] }}</td>
+                            <td class="p-4 border-b border-gray-800/50">{{ emp[3] }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="p-8 text-center text-textMain/50 italic">
+                                Database is empty. Add an assignment to start.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
